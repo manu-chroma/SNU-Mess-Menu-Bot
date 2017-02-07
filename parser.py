@@ -12,6 +12,7 @@ def parser():
     # create soup from source
     soup = BeautifulSoup(r.content, "lxml")
 
+    # this will contain the complete mess menu
     response_dict = defaultdict(dict)
 
     """
@@ -25,10 +26,10 @@ def parser():
 
 
         if "No Menu Available." in response:
-            response_dict[idx]['response'] = 'False'
+            response_dict[idx]['response'] = False
         else:
             # parse the date present in the source
-            response_dict[idx]['response'] = 'True'
+            response_dict[idx]['response'] = True
             response_dict[idx]['date'] =  parse(response).date()
 
             # parse all the meals of the day
