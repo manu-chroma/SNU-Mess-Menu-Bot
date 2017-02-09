@@ -15,10 +15,10 @@ def parser():
     # this will contain the complete mess menu
     response_dict = defaultdict(dict)
 
-    """
+    """ 
     there are 2 tables present in the source
     table[0] -> dh1 and table[1] -> dh2
-    each table contains date, breakfast, lunch, dinner in <p> tags
+    each table contains date, breakfeast, lunch, dinner in <p> tags
     """
     tables = soup.find_all('table')
     mess_name = ['DH1','DH2']
@@ -27,7 +27,8 @@ def parser():
         response = mess.find_all("label")[0].text.strip()
 
         if "No Menu Available." in response:
-            response_dict[mess_name[idx]]['response'] = False
+            response_dict[mess_name[idx]]['respon1se'] = False
+            response_dict[mess_name[idx]]['date'] = '' 
         else:
             # parse the date present in the source
             response_dict[mess_name[idx]]['response'] = True
@@ -36,13 +37,13 @@ def parser():
             # parse all the meals of the day
             td_elements = mess.find_all("td")
 
-            meals_of_the_day = ['breakfast', 'lunch', 'dinner']
+            meals_of_the_day = ['Breakfast', 'Lunch', 'Dinner']
 
             for meal_name_idx, meal_name in enumerate(meals_of_the_day):
                 response_dict[mess_name[idx]][meal_name] = []
 
                 for meal in (td_elements[meal_name_idx+1].find_all('p')):
-                    response_dict[mess_name[idx]][meal_name].append(meal.text.strip())                
+                    response_dict[mess_name[idx]][meal_name].append(meal.text.replace('"', '').strip().capitalize())                
 
     return response_dict
 
