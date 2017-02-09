@@ -4,7 +4,7 @@ from dateutil.parser import *
 from collections import defaultdict
 
 def parser():
-    # fetch url http://messmenu.snu.in/messMenu.php source
+    # fetch url source
     URL = "http://messmenu.snu.in/messMenu.php"
     headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'}
     r = requests.get(URL, headers=headers)
@@ -18,36 +18,34 @@ def parser():
     """
     there are 2 tables present in the source
     table[0] -> dh1 and table[1] -> dh2
+    each table contains date, breakfast, lunch, dinner in <p> tags
     """
     tables = soup.find_all('table')
+    mess_name = ['DH1','DH2']
 
     for idx, mess in enumerate(tables):
         response = mess.find_all("label")[0].text.strip()
 
-
         if "No Menu Available." in response:
-            response_dict[idx]['response'] = False
+            response_dict[mess_name[idx]]['response'] = False
         else:
             # parse the date present in the source
-            response_dict[idx]['response'] = True
-            response_dict[idx]['date'] =  parse(response).date()
+            response_dict[mess_name[idx]]['response'] = True
+            response_dict[mess_name[idx]]['date'] =  parse(response).date()
 
             # parse all the meals of the day
             td_elements = mess.find_all("td")
 
-            response_dict[idx]['breakfast'] = []
-            for meal in (td_elements[1].find_all('p')):
-                response_dict[idx]['breakfast'].append(meal.text.strip())
+            meals_of_the_day = ['breakfast', 'lunch', 'dinner']
 
-            response_dict[idx]["lunch"] = []
-            for meal in (td_elements[2].find_all('p')):
-                response_dict[idx]['lunch'].append(meal.text.strip())
+            for meal_name_idx, meal_name in enumerate(meals_of_the_day):
+                response_dict[mess_name[idx]][meal_name] = []
 
-            response_dict[idx]['dinner'] = []
-            for meal in (td_elements[3].find_all('p')):
-                response_dict[idx]['dinner'].append(meal.text.strip())
+                for meal in (td_elements[meal_name_idx+1].find_all('p')):
+                    response_dict[mess_name[idx]][meal_name].append(meal.text.strip())                
 
     return response_dict
 
 if __name__ == "__main__":
-    print(parser())
+    import pprint
+    pprint.pprint(parser())

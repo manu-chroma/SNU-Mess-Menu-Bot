@@ -1,7 +1,7 @@
 import telegram
 import time
 import datetime
-import dateutil
+import dateutil.parser
 
 from parser import parser
 # from dateutil import parser
