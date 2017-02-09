@@ -1,104 +1,112 @@
 import telegram
+
+import pprint
 import time
 import datetime
 import dateutil.parser
 
+# parser.py
 from parser import parser
-# from dateutil import parser
 
-# initialise tele bot
-
-# parse .config file to obtain token and public channel name 
+# INIT Telegram Bot
+# parse .config file to obtain token and public channel name
 with open('.config', 'r') as f:
     lines = f.readlines()
-    # collect token from the config file 
+    # collect token from the config file
     TOKEN = lines[0].split()[2].strip("'")
+    BOT_NAME = lines[1].split()[2].strip("'")
 
-bot = telegram.Bot(token=TOKEN)
+# autheticate bot
+try:
+    bot = telegram.Bot(token=TOKEN)
+except:
+    print('Invalid Token, update .config and try again')
+    exit(1)
+
+# sample message
+# bot.sendMessage(chat_id=BOT_NAME, text="hello")
+
+print(TOKEN, BOT_NAME)
+print(bot.getMe())
 
 
-# constants for better code understanding
-DH1 = 0
-DH2 = 1
-
-# done for the day ?
-DONE = False
-DONE_DH1 = False
-DONE_DH2 = False
-
-def send_to_channel(data):
-    print("about to send something")
-    text = data
-    # data[0]['date'] = dateutil.parser
-
-    del data[0]['date']
-    del data[1]['date']
+def prettify_before_sending(data, mess_name):
     text = ''
-    mess_names = ['DH1', 'DH2']
-    bot.sendMessage(chat_id='@snu_mess_menu', text=text)
+    text += '*'+mess_name+' menu for '+data['date'].strftime("%d-%m-%Y")+"*\n"
+    
+    meal_in_day = ['Breakfast', 'Lunch', 'Dinner'] 
+    for meal_name in meal_in_day:
+        print ('\n')
+        text += '_'+meal_name+':_ \n '
+        for item in data[meal_name]:
+            text += '- '+item+'\n '
+        text += '\n'
+
+    # print (text)
+    return text
+
+
+def send_to_channel(data, mess_name):
+
+    text = prettify_before_sending(data, mess_name)
+
+    # send to the channel
+    bot.sendMessage(chat_id=BOT_NAME, 
+                    text=text, 
+                    parse_mode='Markdown')
+
 
 def main():
-    bot.sendMessage(chat_id='@snu_mess_menu', text="hello")
-
-    # declare globals
-    global DONE, DONE_DH1, DONE_DH2
-
+    # declare bools
+    # // check this logic, should these be ouside the main and be globals 
+    DONE, DONE_DH1, DONE_DH2 = (False,) * 3
+    # get today's date
     current_time = datetime.datetime.now()
-
-    mess_names = ['DH1', 'DH2']
-
     while True:
         # fetch data dict from website
         data = parser()
-        print("fetch data complete")
+        print("fetch data complete..")
 
         if not DONE:
             if not DONE_DH1:
-                print(data[DH1]['response'])
-                if data[DH1]['response'] is True: #and current_time._month == data[DH1]['date']._month:
-                    print("hello")
+                print(data['DH1']['response'])
+                # if fetched data actually contains menu
+                # and if the date of menu is same as today
+                if data['DH1']['response'] is True and current_time.month == data['DH1']['date'].month and current_time.day == data['DH1']['date'].day:
+                
                     # send message through bot and be done with it
-                    # todo: how to send data in a formatted manner
-                    send_to_channel(data)
-                    DONE_DH1 = 1
-
+                    send_to_channel(data['DH1'], 'DH1')
+                    DONE_DH1 = True
 
             if not DONE_DH2:
-                print(data[DH1]['response'])
-                if data[DH2]['response'] is True:
-                    print("hello")
-                    # send message through bot and be done with it
-                    send_to_channel(data)
-                    DONE_DH2 = 1
+                print(data['DH2']['response'])
+                if data['DH2']['response'] is True and current_time.month == data['DH2']['date'].month and current_time.day == data['DH2']['date'].day:
 
+                    # send message through bot and be done with it
+                    send_to_channel(data['DH2'], 'DH2')
+                    DONE_DH2 = True
+
+            # if done for the day ?
             if DONE_DH1 and DONE_DH2:
 
-                print("ready to sleep now")
+                print("ready to sleep now till next day begins")
+                DONE = True
 
-                DONE = 1
                 # now sleep till 12 am of next day
                 current_time = datetime.datetime.now()
 
                 # set date to next day 12:01 am
                 wake_up_time = current_time
-                wake_up += datetime.timedelta(days=1)
+                wake_up_time += datetime.timedelta(days=1)
                 wake_up_time.replace(hour=0, minute=1)
 
                 # sleep for time delta between these two dates
-                time.sleep((wake_up_time-current_time).total_seconds())
+                time.sleep((wake_up_time - current_time).total_seconds())
 
             else:
                 # sleep for an hour and then try again
-                time.sleep(60*60)
-        # sleep for half an hour and then try again to fetch the menu
-
-    print(bot.getMe())
-
-    # sending test message to the channel
-    # bot.sendMessage(chat_id='@snu_mess_menu', text='This is a test message')
+                time.sleep(60 * 60)
+                # sleep for half an hour and then try again to fetch the menu
 
 if __name__ == '__main__':
-    pass
-    # main()
-    data = parser()
-    send_to_channel(data)
+    main()
