@@ -1,10 +1,10 @@
 # SNU_MessMenuBot
-Telegram Bot that sends daily mess menu for Shiv Nadar University on channel @snu_mess_menu  
+Telegram Bot that sends daily mess menu for Shiv Nadar University on channel ``@snu_mess_menu`` 
 
-``parse.py`` parses the website source link and converts the mess menu into a response dict
-
-This project can be deployed to any other Telegram channel and using a different bot. Check ``config.txt``
-
+- ``parse.py`` parses the website source link and converts the mess menu into a response dict
+- ``bot.py`` checks if there is need to publish the menu. If yes, it pretty prints to the channel 
 
 ## Screens 
 
+![](https://github.com/manu-chroma/SNU_MessMenuBot/blob/master/images/telegram.png)
+![](https://github.com/manu-chroma/SNU_MessMenuBot/blob/master/images/response_dict.png)
