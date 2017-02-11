@@ -26,6 +26,9 @@ except:
 # sample message
 # bot.sendMessage(chat_id=BOT_NAME, text="hello")
 
+# bool variables init 
+DONE, DONE_DH1, DONE_DH2 = (False,) * 3
+
 print(TOKEN, BOT_NAME)
 print(bot.getMe())
 
@@ -49,7 +52,7 @@ def prettify_before_sending(data, mess_name):
 def send_to_channel(data, mess_name):
 
     text = prettify_before_sending(data, mess_name)
-
+    
     # send to the channel
     bot.sendMessage(chat_id=BOT_NAME, 
                     text=text, 
@@ -57,9 +60,10 @@ def send_to_channel(data, mess_name):
 
 
 def main():
-    # declare bools
-    # // check this logic, should these be ouside the main and be globals 
-    DONE, DONE_DH1, DONE_DH2 = (False,) * 3
+    
+    # use global bools
+    global DONE, DONE_DH1, DONE_DH2 
+    
     # get today's date
     current_time = datetime.datetime.now()
     while True:
@@ -102,6 +106,8 @@ def main():
 
                 # sleep for time delta between these two dates
                 time.sleep((wake_up_time - current_time).total_seconds())
+                # reinit the variables, cuz new day 
+                DONE, DONE_DH1, DONE_DH2 = (False,) * 3
 
             else:
                 # sleep for an hour and then try again
