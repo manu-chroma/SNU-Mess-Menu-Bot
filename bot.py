@@ -4,6 +4,7 @@ import pprint
 import time
 import datetime
 import dateutil.parser
+from pytz import timezone
 
 # parser.py
 from parser import parser
@@ -64,8 +65,10 @@ def main():
     # use global bools
     global DONE, DONE_DH1, DONE_DH2 
     
-    # get today's date
-    current_time = datetime.datetime.now()
+    # get today's datetime, IST timezone 
+    ist_timezone = timezone('Asia/Kolkata')
+    current_time = datetime.datetime.now(ist_timezone)
+
     while True:
         # fetch data dict from website
         data = parser()
