@@ -123,4 +123,9 @@ def main():
                 # sleep for half an hour and then try again to fetch the menu
 
 if __name__ == '__main__':
+	# don't publish menu for today if cli arguement exists
+    # not specifiying any specific keyword atm 
+    if len(sys.argv) > 1: 
+    	DONE_DH2 = DONE_DH1 = True 
+
     main()
