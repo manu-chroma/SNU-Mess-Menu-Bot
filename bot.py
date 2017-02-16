@@ -70,6 +70,8 @@ def main():
         # fetch data dict from website
         data = parser()
         print("fetch data complete..")
+        if data['DH1']['response'] is True or data['DH2']['response'] is True:
+        	print ('partial/complete menu fetch successful from the website')
 
         if not DONE:
             if not DONE_DH1:
@@ -79,6 +81,7 @@ def main():
                 if data['DH1']['response'] is True and current_time.month == data['DH1']['date'].month and current_time.day == data['DH1']['date'].day:
                 
                     # send message through bot and be done with it
+                    print ('sending DH1 menu channel')
                     send_to_channel(data['DH1'], 'DH1')
                     DONE_DH1 = True
 
@@ -87,6 +90,7 @@ def main():
                 if data['DH2']['response'] is True and current_time.month == data['DH2']['date'].month and current_time.day == data['DH2']['date'].day:
 
                     # send message through bot and be done with it
+                    print ('sending DH2 menu to channel')
                     send_to_channel(data['DH2'], 'DH2')
                     DONE_DH2 = True
 
@@ -111,6 +115,7 @@ def main():
 
             else:
                 # sleep for an hour and then try again
+                print('will try to fetch again in an hour')
                 time.sleep(60 * 60)
                 # sleep for half an hour and then try again to fetch the menu
 
