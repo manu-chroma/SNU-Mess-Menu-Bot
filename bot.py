@@ -66,11 +66,12 @@ def main():
     # use global bools
     global DONE, DONE_DH1, DONE_DH2 
     
-    # get today's datetime, IST timezone 
-    ist_timezone = timezone('Asia/Kolkata')
-    current_time = datetime.datetime.now(ist_timezone)
-
     while True:
+        # get today's datetime, IST timezone 
+        ist_timezone = timezone('Asia/Kolkata')
+        current_time = datetime.datetime.now(ist_timezone)
+        print("current_time in IST: {}".format(current_time))
+
         # fetch data dict from website
         data = parser()
         print("fetch data complete..")
@@ -115,6 +116,7 @@ def main():
                 # sleep for time delta between these two dates
                 time.sleep((wake_up_time - current_time).total_seconds())
                 # reinit the variables, cuz new day 
+                print("woke back up")
                 DONE, DONE_DH1, DONE_DH2 = (False,) * 3
 
             else:
