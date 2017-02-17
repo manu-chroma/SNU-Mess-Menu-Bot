@@ -4,16 +4,22 @@ from dateutil.parser import *
 from collections import defaultdict
 
 def parser():
+    # this will contain the complete mess menu
+    response_dict = defaultdict(dict)
+
     # fetch url source
     URL = "http://messmenu.snu.in/messMenu.php"
     headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'}
-    r = requests.get(URL, headers=headers)
+    try:
+        r = requests.get(URL, headers=headers)
+    except: 
+        # return empty dict
+        response_dict['DH1']['response'] = False
+        response_dict['DH2']['response'] = False
+        return response_dict
 
     # create soup from source
     soup = BeautifulSoup(r.content, "lxml")
-
-    # this will contain the complete mess menu
-    response_dict = defaultdict(dict)
 
     """ 
     there are 2 tables present in the source
@@ -27,7 +33,7 @@ def parser():
         response = mess.find_all("label")[0].text.strip()
 
         if "No Menu Available." in response:
-            response_dict[mess_name[idx]]['respon1se'] = False
+            response_dict[mess_name[idx]]['response'] = False
             response_dict[mess_name[idx]]['date'] = '' 
         else:
             # parse the date present in the source
