@@ -106,7 +106,7 @@ def main():
                 DONE = True
 
                 # now sleep till 12 am of next day
-                current_time = datetime.datetime.now()
+                current_time = datetime.datetime.now(ist_timezone)
 
                 # set date to next day 12:01 am
                 wake_up_time = current_time
@@ -124,6 +124,7 @@ def main():
                 print('will try to fetch again in an hour')
                 time.sleep(60 * 60)
                 # sleep for half an hour and then try again to fetch the menu
+                print('woke up from 1 hr sleep')
 
 if __name__ == '__main__':
 	# don't publish menu for today if cli arguement exists
