@@ -78,53 +78,52 @@ def main():
         if data['DH1']['response'] is True or data['DH2']['response'] is True:
         	print ('partial/complete menu fetch successful from the website')
 
-        if not DONE:
-            if not DONE_DH1:
-                print(data['DH1']['response'])
-                # if fetched data actually contains menu
-                # and if the date of menu is same as today
-                if data['DH1']['response'] is True and current_time.month == data['DH1']['date'].month and current_time.day == data['DH1']['date'].day:
-                
-                    # send message through bot and be done with it
-                    print ('sending DH1 menu channel')
-                    send_to_channel(data['DH1'], 'DH1')
-                    DONE_DH1 = True
+        if not DONE_DH1:
+            print(data['DH1']['response'])
+            # if fetched data actually contains menu
+            # and if the date of menu is same as today
+            if data['DH1']['response'] is True and current_time.month == data['DH1']['date'].month and current_time.day == data['DH1']['date'].day:
+            
+                # send message through bot and be done with it
+                print ('sending DH1 menu channel')
+                send_to_channel(data['DH1'], 'DH1')
+                DONE_DH1 = True
 
-            if not DONE_DH2:
-                print(data['DH2']['response'])
-                if data['DH2']['response'] is True and current_time.month == data['DH2']['date'].month and current_time.day == data['DH2']['date'].day:
+        if not DONE_DH2:
+            print(data['DH2']['response'])
+            if data['DH2']['response'] is True and current_time.month == data['DH2']['date'].month and current_time.day == data['DH2']['date'].day:
 
-                    # send message through bot and be done with it
-                    print ('sending DH2 menu to channel')
-                    send_to_channel(data['DH2'], 'DH2')
-                    DONE_DH2 = True
+                # send message through bot and be done with it
+                print ('sending DH2 menu to channel')
+                send_to_channel(data['DH2'], 'DH2')
+                DONE_DH2 = True
 
-            # if done for the day ?
-            if DONE_DH1 and DONE_DH2:
+        # if done for the day ?
+        if DONE_DH1 and DONE_DH2:
 
-                print("ready to sleep now till next day begins")
-                DONE = True
+            print("ready to sleep now till next day begins")
+            DONE = True
 
-                # now sleep till 12 am of next day
-                current_time = datetime.datetime.now(ist_timezone)
+            # now sleep till 12 am of next day
+            current_time = datetime.datetime.now(ist_timezone)
 
-                # set date to next day 12:01 am
-                wake_up_time = current_time
-                wake_up_time += datetime.timedelta(days=1)
-                wake_up_time.replace(hour=0, minute=1)
+            # set date to next day 12:01 am
+            wake_up_time = current_time
+            wake_up_time += datetime.timedelta(days=1)
+            wake_up_time = wake_up_time.replace(hour=0, minute=1)
 
-                # sleep for time delta between these two dates
-                time.sleep((wake_up_time - current_time).total_seconds())
-                # reinit the variables, cuz new day 
-                print("woke back up")
-                DONE, DONE_DH1, DONE_DH2 = (False,) * 3
+            # sleep for time delta between these two dates
+            time.sleep((wake_up_time - current_time).total_seconds())
+            # reinit the variables, cuz new day 
+            print("woke back up")
+            DONE, DONE_DH1, DONE_DH2 = (False,) * 3
 
-            else:
-                # sleep for an hour and then try again
-                print('will try to fetch again in an hour')
-                time.sleep(60 * 60)
-                # sleep for half an hour and then try again to fetch the menu
-                print('woke up from 1 hr sleep')
+        else:
+            # sleep for an hour and then try again
+            print('will try to fetch again in an hour')
+            time.sleep(60 * 60)
+            # sleep for half an hour and then try again to fetch the menu
+            print('woke up from 1 hr sleep')
 
 if __name__ == '__main__':
 	# don't publish menu for today if cli arguement exists
