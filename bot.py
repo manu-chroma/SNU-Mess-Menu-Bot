@@ -7,7 +7,6 @@ import datetime
 import dateutil.parser
 from pytz import timezone
 
-# parser.py
 from parser import parser
 
 # Helpful for debug
@@ -16,14 +15,12 @@ def _print(*args):
     print("[{}]:".format(time) , end=' ')
     print(" ".join(map(str, args)))
 
-
 def prettify_before_sending(data, mess_name):
     text = ''
     text += '*'+mess_name+' menu for '+data['date'].strftime("%d-%m-%Y")+"*\n"
     
     meal_in_day = ['Breakfast', 'Lunch', 'Dinner'] 
     for meal_name in meal_in_day:
-        _print ('\n')
         text += '_'+meal_name+':_ \n '
         for item in data[meal_name]:
             text += '- '+item+'\n '
@@ -31,9 +28,7 @@ def prettify_before_sending(data, mess_name):
 
     return text
 
-
-def send_to_channel(data, mess_name):
-
+def send_to_channel(bot, data, mess_name):
     text = prettify_before_sending(data, mess_name)
     
     # send to the channel
@@ -41,16 +36,17 @@ def send_to_channel(data, mess_name):
                     text=text, 
                     parse_mode='Markdown')
 
+# bool variables init 
+DONE = {"DH1": False, "DH2": False}
+
+# Parse .config file to obtain TOKEN and CHANNEL NAME
+with open('.config', 'r') as f:
+    lines = f.readlines()
+    # collect token from the config file
+    TOKEN = lines[0].split()[2].strip("'")
+    CHANNEL_NAME = lines[1].split()[2].strip("'")
 
 def main():
-    
-    # Parse .config file to obtain TOKEN and CHANNEL NAME
-    with open('.config', 'r') as f:
-        lines = f.readlines()
-        # collect token from the config file
-        TOKEN = lines[0].split()[2].strip("'")
-        CHANNEL_NAME = lines[1].split()[2].strip("'")
-
     # AUTHETICATION
     try:
         bot = telegram.Bot(token=TOKEN)
@@ -63,12 +59,10 @@ def main():
     _print(TOKEN, CHANNEL_NAME)
     _print(bot.getMe())
 
-    # bool variables init 
-    DONE = {"DH1": False, "DH2": False}
-
+    global DONE
+    
     # so-called event loop
     while True:
-
         # get today's datetime, IST timezone 
         ist_timezone = timezone('Asia/Kolkata')
         current_time = datetime.datetime.now(ist_timezone)
@@ -83,10 +77,10 @@ def main():
                 _print(data[key]['response'])
                 # fetch checking logic 
                 if data[key]['response'] is True and current_time.month == data[key]['date'].month and current_time.day == data[key]['date'].day:
-                    
+                     
                     # send menu through bot
-                    _print ('Sending {} menu to channel'.format(key))
-                    send_to_channel(data[key], key)
+                    _print('Sending {} menu to channel'.format(key))
+                    send_to_channel(bot, data[key], key)
                     DONE[key] = True
 
         # Done for the day?
