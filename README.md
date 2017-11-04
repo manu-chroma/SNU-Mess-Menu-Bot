@@ -1,4 +1,4 @@
-# SNU_MessMenuBot
+# SNU Mess Menu Bot
 Telegram Bot that sends daily mess menu for Shiv Nadar University on channel ``@snu_mess`` 
 
 - ``parse.py`` parses the website source link and converts the mess menu into a response dict
