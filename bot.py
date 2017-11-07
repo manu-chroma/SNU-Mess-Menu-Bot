@@ -9,6 +9,16 @@ from pytz import timezone
 
 from parser import parser
 
+# bool variables init 
+DONE = {"DH1": False, "DH2": False}
+
+# Parse .config file to obtain TOKEN and CHANNEL NAME
+with open('.config', 'r') as f:
+    lines = f.readlines()
+    # collect token from the config file
+    TOKEN = lines[0].split()[2].strip("'")
+    CHANNEL_NAME = lines[1].split()[2].strip("'")
+
 # Helpful for debug
 def _print(*args):
     time = datetime.datetime.now().time().isoformat()[:8]
@@ -35,16 +45,6 @@ def send_to_channel(bot, data, mess_name):
     bot.sendMessage(chat_id=CHANNEL_NAME, 
                     text=text, 
                     parse_mode='Markdown')
-
-# bool variables init 
-DONE = {"DH1": False, "DH2": False}
-
-# Parse .config file to obtain TOKEN and CHANNEL NAME
-with open('.config', 'r') as f:
-    lines = f.readlines()
-    # collect token from the config file
-    TOKEN = lines[0].split()[2].strip("'")
-    CHANNEL_NAME = lines[1].split()[2].strip("'")
 
 def main():
     # AUTHETICATION
